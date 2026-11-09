@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pink Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="calculator">
+    <div class="brand">Pink Calculator</div>
+    <input type="text" id="display" disabled placeholder="0">
+    <div class="buttons">
+      <!-- Rząd 1 -->
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button class="action" onclick="backspace()">⌫</button>
+      <button class="operator" onclick="appendOperator('/')">÷</button>
+      <button class="operator" onclick="appendOperator('*')">×</button>
+      
+      <!-- Rząd 2 -->
+      <button onclick="appendNumber('7')">7</button>
+      <button onclick="appendNumber('8')">8</button>
+      <button onclick="appendNumber('9')">9</button>
+      <button class="operator" onclick="appendOperator('-')">-</button>
+      
+      <!-- Rząd 3 -->
+      <button onclick="appendNumber('4')">4</button>
+      <button onclick="appendNumber('5')">5</button>
+      <button onclick="appendNumber('6')">6</button>
+      <button class="operator" onclick="appendOperator('+')">+</button>
+      
+      <!-- Rząd 4 -->
+      <button onclick="appendNumber('1')">1</button>
+      <button onclick="appendNumber('2')">2</button>
+      <button onclick="appendNumber('3')">3</button>
+      <button class="equal" onclick="calculate()">=</button>
+      
+      <!-- Rząd 5 -->
+      <button class="zero" onclick="appendNumber('0')">0</button>
+      <button onclick="appendDecimal('.')">.</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+
+    function appendNumber(num) {
+      display.value += num;
+    }
+
+    function appendDecimal(dot) {
+      const parts = display.value.split(/[\+\-\*\/]/);
+      const currentNumber = parts[parts.length - 1];
+      if (!currentNumber.includes('.')) {
+        display.value += dot;
+      }
+    }
+
+    function appendOperator(operator) {
+      if (display.value === '') return;
+      const lastChar = display.value.slice(-1);
+      if (['+', '-', '*', '/'].includes(lastChar)) {
+        display.value = display.value.slice(0, -1) + operator;
+      } else {
+        display.value += operator;
+      }
+    }
+
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+      if (!display.value) return;
+      try {
+        const sanitizedExpression = display.value.replace(/[^0-9\+\-\*\/\.]/g, '');
+        const result = new Function(`return ${sanitizedExpression}`)();
+        display.value = Number.isFinite(result) ? result : 'Error';
+      } catch (e) {
+        display.value = 'Error';
+      }
+    }
+  </script>
+
+</body>
+</html>
